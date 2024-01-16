@@ -37,7 +37,7 @@ const thoughtsController = {
     try {
       const updatedThought = await Thought.findOneAndUpdate(
         {
-          _id: req.params.id,
+          _id: req.params.thoughtId,
         },
         req.body,
         { 
@@ -59,7 +59,7 @@ const thoughtsController = {
 
   async deleteSingleThought(req, res) {
     try {
-      const thoughtRemoval = await Thought.findByIdAndDelete(req.params.id);
+      const thoughtRemoval = await Thought.findByIdAndDelete(req.params.thoughtId);
       if(!thoughtRemoval) {
         res.status(404).json({
           message: 'Could not locate thought.',
@@ -68,9 +68,9 @@ const thoughtsController = {
       }
       const user = await Users.findOneAndUpdate(
         { 
-          thoughts: { $eq: req.params.id },
+          thoughts: { $eq: req.params.thoughtId },
         }, 
-        { $pull : { thoughts: req.params.id }},
+        { $pull : { thoughts: req.params.thoughtId }},
         { 
         }
       )
@@ -86,12 +86,14 @@ const thoughtsController = {
       if (!newReaction) {
         res.status(404).json({
           message: 'Thought not found.',
+          
         })
       }
       newReaction.reactions.push(req.body);
       res.json(newReaction);
 
     } catch (err) {
+      console.log(newReaction)
       console.log(err);
       res.status(500).json(err);
     }
