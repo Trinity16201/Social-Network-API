@@ -82,25 +82,29 @@ const thoughtsController = {
   },
   async createReaction(req, res) {
     try {
-      const newReaction = await Thought.findOne({ _id: req.params.id});
+      const newReaction = await Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId},
+        { $addToSet: { reactions: req.body}},
+        { runValidators: true, new: true}
+        );
+
       if (!newReaction) {
         res.status(404).json({
           message: 'Thought not found.',
           
         })
       }
-      newReaction.reactions.push(req.body);
       res.json(newReaction);
 
     } catch (err) {
-      console.log(newReaction)
       console.log(err);
       res.status(500).json(err);
     }
   },
+
   async deleteReaction(req, res) {
     try {
-      const thoughtToRemoveReactionFrom = await Thought.findOne({ _id: req.params.id});
+      const thoughtToRemoveReactionFrom = await Thought.findOne({ _id: req.params.reactionId});
       if (!thoughtToReactTo) {
         res.status(404).json({
           message: 'Could not locate thought.',
