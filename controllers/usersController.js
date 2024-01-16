@@ -52,39 +52,45 @@ async deleteSingleUser(req, res) {
   }
 },
 
-addFriend(req,res) {
-  Users.findAndUpdate(
-    {_id: req.params.userId},
-    {$addToSet: { friends: req.body.friendId || req.params.friendId}},
-    { new: true}
-  )
-  .then(userData => {
-    if (!userData) {
-      return res.status(404).json({ message: 'Unable to locate user'})
-    }
-    res.json(userData);
-  })
-  .catch(err => res.status(500).json(err));
+async addFriend(req,res) {
+  try {
+    const user = await Users.findOneAndUpdate(
+      { 
+        _id: req.params.id,
+        friends: { $ne: req.params.friendId },
+      }, 
+      { $push : { friends: req.params.friendId }},
+      { 
+        new: true,
+        unique: true,
+      }
+    )
+    res.json({message: 'Your user now has a friend!'});
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({message: 'Unable to add friend to this user.'});
+  }
+
 },
 
-removeFriend({params}, res) {
-  Users.findAndUpdate(
-    { _id: params.userId},
-    { $pull: { friends: params.friendId}},
-    { new: true}
-  )
-  .then((dbUsers) => {
-    if(!dbUsers) {
-      return res.status(404).json({ message: 'Unable to locate user'})
-    }
-    const remove = !dbUsers.friends.includes(params.friendId);
-    if (remove) {
-      res.json({ message: 'Friend has been removed', dbUsers});
-    } else {
-      res.json(dbUsers);
-    }
-  })
-  .catch(err => res.status(500).json(err));
+async removeFriend(req, res) {
+  try {
+    const user = await Users.findOneAndUpdate(
+      { 
+        _id: req.params.id,
+      }, 
+      { $pull : { friends: req.params.friendId }},
+      { 
+        new: true,
+      }
+    )
+    res.json({message: 'Friend has been removed from this user'});
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+}
 }
 };
 
