@@ -24,12 +24,6 @@ const thoughtSchema = new Schema(
       },
     ],
     reactions: [ReactionSchema]
-    // [
-    //   {
-    //     type: Schema.Types.ObjectId,
-    //     required: true,
-    //   },
-    // ],
   },
   {
     toJSON: {
