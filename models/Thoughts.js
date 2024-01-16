@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-
+const ReactionSchema = require("./Reactions");
 // Schema to create Student model
 const thoughtSchema = new Schema(
   {
@@ -23,12 +23,13 @@ const thoughtSchema = new Schema(
         required: true,
       },
     ],
-    reactions: [
-      {
-        type: Schema.Types.ObjectId,
-        required: true,
-      },
-    ],
+    reactions: [ReactionSchema]
+    // [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     required: true,
+    //   },
+    // ],
   },
   {
     toJSON: {
