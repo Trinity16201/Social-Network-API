@@ -105,14 +105,14 @@ const thoughtsController = {
 
   async deleteReaction(req, res) {
     try {
-      const thoughtToRemoveReactionFrom = await Thought.findByIdAndDelete({ _id: req.params.reactionId});
-      if (!thoughtToReactTo) {
+      const thoughtToRemoveReactionFrom = await Thought.findById({ _id: req.params.thoughtId});
+      if (!thoughtToRemoveReactionFrom) {
         res.status(404).json({
           message: 'Could not locate thought.',
         })
       }
-      thoughtToRemoveReactionFrom.reactions.id(req.body.reactionId).remove();
-      res.json(thoughtToReactTo);
+      thoughtToRemoveReactionFrom.reactions.pull({_id: req.params.reactionId});
+      res.json(thoughtToRemoveReactionFrom);
 
     } catch (err) {
       console.log(err);
